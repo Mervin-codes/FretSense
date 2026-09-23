@@ -1,0 +1,2 @@
+FretSense Windows 5.2.3
+Same UI/logic baseline as FretSense Android 5.2.3.
