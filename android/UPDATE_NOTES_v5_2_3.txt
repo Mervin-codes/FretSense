@@ -1,0 +1,12 @@
+FretSense v5.2.3
+
+Fixed capo/transposed play display:
+- Timeline now shows the chord shape the musician should physically play.
+- PLAY NOW now shows the playable capo shape.
+- Chord diagram now follows the playable capo shape.
+- A small "sounds X" label preserves the actual sounding chord.
+- Timeline badge changes to CAPO N when capo mode is active.
+- Common chords and Practice mode now follow capo shapes too.
+- Key transpose still applies first, then capo shapes are calculated from that active key.
+
+Example: Original A#m + capo 1 => PLAY NOW Am, diagram Am, small label sounds A#m.

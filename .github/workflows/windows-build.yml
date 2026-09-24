@@ -1,0 +1,63 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-build.txt
+
+      - name: Validate Python
+        run: python -m py_compile fretsense_windows.py
+
+      - name: Build FretSense
+        shell: cmd
+        run: >-
+          pyinstaller --noconfirm --clean --windowed
+          --name FretSense
+          --icon assets\FretSense.ico
+          --add-data "app;app"
+          --add-data "assets;assets"
+          fretsense_windows.py
+
+      - name: Zip Windows build
+        shell: pwsh
+        run: Compress-Archive -Path dist\FretSense\* -DestinationPath dist\FretSense-Windows-v5.2.3.zip -Force
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FretSense-Windows
+          path: windows/dist/FretSense-Windows-v5.2.3.zip
+
+      - name: Publish tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: windows/dist/FretSense-Windows-v5.2.3.zip

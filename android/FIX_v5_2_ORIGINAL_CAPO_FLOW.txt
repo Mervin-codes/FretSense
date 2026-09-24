@@ -1,0 +1,9 @@
+FretSense v5.2.0 — Original-first capo flow
+
+- Analyze Song always shows the original detected song chords.
+- Automatic capo selection was removed from the analysis screen.
+- Capo defaults to No Capo.
+- The user manually selects Fret 1, Fret 2, ... Fret 12.
+- Original chords remain unchanged; FretSense calculates only the shapes to physically play.
+- The Transpose screen now displays Original Song Chords first, Capo second, and optional key transposition last.
+- Optional transpose defaults to 0 and only changes when the user presses +/- intentionally.

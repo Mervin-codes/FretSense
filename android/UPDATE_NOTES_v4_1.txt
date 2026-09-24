@@ -1,0 +1,19 @@
+FretSense Standalone Android v4.1 changes
+
+1) New song isolation
+- Selecting a new song now clears the previous song workspace before fresh analysis.
+- Old loop points, tabs, isolation results, and current-song UI no longer carry into the new song.
+- New analysis requests also invalidate older unfinished analysis runs.
+
+2) Improved tab generation
+- Replaced the old peak-only note guess with a local pitch-estimation flow.
+- Notes are grouped into short melody segments and smoothed before converting to guitar positions.
+- Tabs are still an estimate, but they should be more stable and more playable than before.
+
+3) Premium luxury icon
+- Added a new dark bronze premium app icon.
+- Android launcher icon resources were added in mipmap-mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi.
+- AndroidManifest now points to the launcher icon.
+
+4) UI polish
+- Typography stack adjusted to look less playful and more premium on Android devices.

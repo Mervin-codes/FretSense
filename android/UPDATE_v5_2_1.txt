@@ -1,0 +1,7 @@
+FretSense v5.2.1
+
+Transpose display fix:
+- Original detected chords remain stored unchanged.
+- When the user intentionally transposes + or -, the active timeline, common chords, current/next chord, practice view, key/scale display and capo shapes all update to the transposed key.
+- Capo calculations are based on the active transposed chords.
+- The Capo panel keeps the original song chords visible as a reference and shows active transposed chords separately when transpose is not 0.

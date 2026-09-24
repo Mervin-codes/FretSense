@@ -1,0 +1,19 @@
+FretSense Multi-Instrument Android v5.2.2
+
+FIX: Active chord diagram now follows the active sounding chord.
+
+Behavior:
+- Transpose = 0: the diagram shows the original detected chord.
+- Transpose changed: the diagram changes to the transposed chord everywhere.
+- Capo does NOT replace the main diagram with the easy capo shape.
+- The capo-friendly shape remains shown separately below the diagram.
+
+Example:
+Active chord: A#m
+Capo: 1
+Main diagram: A#m (x 1 3 3 2 1)
+Capo-friendly instruction: play Am shape with capo 1
+
+Added movable guitar diagrams for sharp/flat major and minor chords and common 7th qualities.
+Version: 5.2.2
+Version code: 11

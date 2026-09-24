@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0c0e" />
+  <title>FretSense — Multi-Instrument Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">FS</div>
+        <div><strong>FretSense</strong><span>Multi-Instrument Studio</span></div>
+      </div>
+      <nav id="nav">
+        <button class="nav-btn active" data-view="analyze">⌁ <span>Analyze Song</span></button>
+        <button class="nav-btn" data-view="instrument">◇ <span>Instrument</span></button>
+        <button class="nav-btn" data-view="practice">▶ <span>Practice</span></button>
+        <button class="nav-btn" data-view="strumming">⇅ <span>Rhythm Studio</span></button>
+        <button class="nav-btn" data-view="isolation">◫ <span>Guitar Isolation</span></button>
+        <button class="nav-btn" data-view="capo">⌃ <span>Capo</span></button>
+        <button class="nav-btn" data-view="transpose">↕ <span>Transpose</span></button>
+        <button class="nav-btn" data-view="live">◉ <span>Live Chord</span></button>
+        <button class="nav-btn" data-view="tuner">⌾ <span>Tuner</span></button>
+        <button class="nav-btn" data-view="metronome">♩ <span>Metronome</span></button>
+        <button class="nav-btn" data-view="scales">♯ <span>Scale Finder</span></button>
+        <button class="nav-btn" data-view="library">▤ <span>My Songs</span></button>
+        <button class="nav-btn" data-view="connection">◆ <span>Offline Engine</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <span id="serverDot" class="dot ok"></span><span id="serverStatus">On-device engine ready</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">PLAYER / PRACTICE / THEORY</div>
+          <h1 id="pageTitle">Analyze Song</h1>
+        </div>
+        <div class="top-actions">
+          <button id="installBtn" class="ghost hidden">Install App</button>
+          <button id="instrumentQuick" class="instrument-badge" type="button"><span class="instrument-badge-label">INSTRUMENT</span><strong id="currentInstrumentBadge">GUITAR</strong></button>
+          <span class="desktop-badge" id="platformBadge">MULTI v5</span>
+        </div>
+      </header>
+
+      <section id="view-analyze" class="view active">
+        <div class="hero-grid">
+          <div class="panel upload-panel">
+            <div class="panel-kicker">SONG ANALYZER</div>
+            <h2>Drop a track. Get something you can actually play.</h2>
+            <p>Detect key, BPM, chord changes, easy capo shapes, scales and practice sections.</p>
+            <label class="dropzone" id="dropzone">
+              <input id="audioFile" type="file" accept="audio/*,.mp3,.wav,.m4a,.flac,.ogg,.aac" />
+              <div class="pick-icon">♪</div>
+              <strong>Choose song</strong>
+              <span>MP3 · WAV · M4A · FLAC · OGG · AAC</span>
+            </label>
+            <div class="upload-row">
+              <input id="songTitle" placeholder="Optional song title" />
+              <button id="analyzeBtn" class="primary">Analyze</button>
+            </div>
+            <div id="analyzeProgress" class="progress hidden"><div></div><span>Reading the song…</span></div>
+          </div>
+
+          <div class="panel now-panel">
+            <div class="panel-kicker">CURRENT SONG</div>
+            <div id="emptyCurrent" class="empty-state">Analyze a song to unlock the full workspace.</div>
+            <div id="currentSummary" class="hidden">
+              <h2 id="currentTitle">—</h2>
+              <div class="stat-grid">
+                <div class="stat"><span>KEY</span><strong id="keyStat">—</strong></div>
+                <div class="stat"><span>BPM</span><strong id="bpmStat">—</strong></div>
+                <div class="stat"><span>CAPO</span><strong id="capoStat">—</strong></div>
+                <div class="stat"><span>DURATION</span><strong id="durationStat">—</strong></div>
+              </div>
+              <div class="mini-label">COMMON CHORDS</div>
+              <div id="commonChords" class="chip-row"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="analysisWorkspace" class="hidden workspace">
+          <div class="panel player-panel">
+            <audio id="audioPlayer" controls preload="metadata"></audio>
+            <div class="player-tools">
+              <label>Speed
+                <select id="speedSelect">
+                  <option value="0.5">50%</option><option value="0.6">60%</option><option value="0.7">70%</option>
+                  <option value="0.8">80%</option><option value="0.9">90%</option><option value="1" selected>100%</option>
+                </select>
+              </label>
+              <button id="setA" class="ghost small">Set Loop A</button>
+              <button id="setB" class="ghost small">Set Loop B</button>
+              <button id="toggleLoop" class="ghost small">Loop Off</button>
+              <button id="clearLoop" class="ghost small">Clear</button>
+              <span id="loopReadout" class="mono">A — / B —</span>
+            </div>
+          </div>
+
+          <div class="analysis-grid">
+            <div class="panel timeline-panel">
+              <div class="panel-head">
+                <div><div class="panel-kicker">CHORD TIMELINE</div><h3>Follow the song</h3></div>
+                <div class="inline-controls"><span id="transposeValue" class="original-badge">ORIGINAL</span></div>
+              </div>
+              <div id="timeline" class="timeline"></div>
+              <p class="muted">Timeline shows the chord shape to play. With a capo, a smaller label shows the sounding chord. Tap a chord to correct the original analysis.</p>
+            </div>
+
+            <div class="panel chord-panel">
+              <div class="panel-kicker">PLAY NOW</div>
+              <div class="now-chord" id="nowChord">—</div>
+              <div class="next-chord">NEXT <strong id="nextChord">—</strong></div>
+              <div class="mini-label chord-diagram-label">PLAY THIS CHORD SHAPE</div>
+              <div id="chordDiagram" class="chord-diagram"></div>
+              <div class="mini-label">SOUNDING / CAPO INFO</div>
+              <div id="shapeNow" class="shape-now">—</div>
+            </div>
+          </div>
+
+          <div class="feature-grid">
+            <div class="panel">
+              <div class="panel-kicker">CAPO POSITION</div>
+              <h3 id="bestCapoHeading">Choose where you want to place the capo</h3>
+              <div id="capoOptions" class="stack"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-kicker">RHYTHM GUIDE</div>
+              <div id="strumPattern" class="pattern">—</div>
+              <div id="strumMiniGrid" class="strum-grid compact"></div>
+              <p id="strumNote" class="muted"></p>
+              <button id="openStrumBtn" class="ghost small">Open Rhythm Studio</button>
+            </div>
+            <div class="panel">
+              <div class="panel-kicker">SOLO / SCALE</div>
+              <h3 id="scaleSuggestion">—</h3>
+              <div id="scaleNotes" class="chip-row"></div>
+              <button id="openScaleBtn" class="ghost small">Open fretboard</button>
+            </div>
+            <div class="panel">
+              <div class="panel-kicker">MELODY / POSITION — BETA</div>
+              <p id="melodyToolDescription">Choose a short section and estimate single-note guitar positions.</p>
+              <div class="two-inputs"><input id="tabStart" type="number" value="0" min="0" step="0.1" placeholder="Start sec"><input id="tabEnd" type="number" value="20" min="0" step="0.1" placeholder="End sec"></div>
+              <button id="tabBtn" class="primary small">Generate Tab</button>
+            </div>
+          </div>
+
+          <div id="tabPanel" class="panel hidden">
+            <div class="panel-head"><div><div class="panel-kicker">MELODY POSITION</div><h3 id="tabPanelHeading">Estimated guitar positions</h3></div><button id="copyTab" class="ghost small">Copy</button></div>
+            <pre id="tabOutput" class="tab-output"></pre>
+            <p id="tabAccuracyNote" class="muted">This is a pitch estimate, not guaranteed note-for-note transcription. Polyphonic mixes can confuse melody tracking.</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><div><div class="panel-kicker">GUITAR ISOLATION</div><h3>Solo the guitar or remove it</h3></div><button id="stemsBtn" class="primary">Open Isolation Studio</button></div>
+            <p class="muted">Create a guitar-focused stem and a no-guitar backing track directly on this phone. Fast DSP is fully offline; AI mode downloads its model once and then runs on-device.</p>
+            <div id="stemsStatus"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-instrument" class="view">
+        <div class="panel tool-panel instrument-panel">
+          <div class="panel-kicker">INSTRUMENT MODE</div>
+          <h2>One song. Your instrument.</h2>
+          <p class="muted">Switch the playing view without re-analyzing the song. Chords, melody positions, tuning and scale layouts adapt to the selected instrument.</p>
+          <div class="instrument-grid" id="instrumentGrid">
+            <button class="instrument-card" data-instrument="guitar" type="button">
+              <span class="instrument-code">GTR</span><strong>Guitar</strong><small>E · A · D · G · B · E</small><em>Chords · tabs · capo · strumming</em>
+            </button>
+            <button class="instrument-card" data-instrument="keyboard" type="button">
+              <span class="instrument-code">KEY</span><strong>Keyboard</strong><small>Chromatic keyboard</small><em>Chord tones · melody notes · scales</em>
+            </button>
+            <button class="instrument-card" data-instrument="ukulele" type="button">
+              <span class="instrument-code">UKE</span><strong>Ukulele</strong><small>G · C · E · A</small><em>Chord shapes · tabs · capo · strumming</em>
+            </button>
+            <button class="instrument-card" data-instrument="violin" type="button">
+              <span class="instrument-code">VLN</span><strong>Violin</strong><small>G · D · A · E</small><em>Fingerboard · melody positions · bow rhythm</em>
+            </button>
+          </div>
+          <div class="instrument-summary">
+            <div><span>ACTIVE</span><strong id="instrumentActiveName">Guitar</strong></div>
+            <div><span>TUNING</span><strong id="instrumentTuning">E A D G B E</strong></div>
+            <div><span>MELODY VIEW</span><strong id="instrumentMelodyView">6-string tab</strong></div>
+          </div>
+          <div id="instrumentNote" class="premium-note">Guitar mode uses standard tuning. Change instruments at any time; your analyzed song stays loaded.</div>
+        </div>
+      </section>
+
+      <section id="view-practice" class="view">
+        <div class="panel">
+          <div class="panel-kicker">PRACTICE MODE</div>
+          <h2>Slow it down. Loop it. Nail the change.</h2>
+          <p id="practiceHint">Analyze or open a saved song first.</p>
+          <div class="practice-stage">
+            <div><span>CURRENT</span><strong id="practiceCurrent">—</strong></div>
+            <div class="arrow">→</div>
+            <div><span>NEXT</span><strong id="practiceNext">—</strong></div>
+          </div>
+          <div class="practice-controls">
+            <button id="practicePlay" class="primary">Play / Pause</button>
+            <button data-rate="0.5" class="rateBtn ghost">50%</button><button data-rate="0.7" class="rateBtn ghost">70%</button><button data-rate="0.85" class="rateBtn ghost">85%</button><button data-rate="1" class="rateBtn ghost">100%</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-capo" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">CAPO</div>
+          <h2>Choose the capo fret yourself.</h2>
+          <p class="muted">Enter the original song chords. FretSense will keep those chords unchanged and show the shapes you should play for the capo position you select.</p>
+          <label>Original song chords<input id="capoInput" value="F# C# D#m B" placeholder="Example: F# C# D#m B"></label>
+          <label>Capo position<select id="capoManualSelect"><option value="0">No capo</option><option value="1">Fret 1</option><option value="2">Fret 2</option><option value="3">Fret 3</option><option value="4">Fret 4</option><option value="5">Fret 5</option><option value="6">Fret 6</option><option value="7">Fret 7</option><option value="8">Fret 8</option><option value="9">Fret 9</option><option value="10">Fret 10</option><option value="11">Fret 11</option><option value="12">Fret 12</option></select></label>
+          <button id="findCapoBtn" class="primary">Show shapes to play</button>
+          <div id="capoFinderResults" class="result-grid"></div>
+        </div>
+      </section>
+
+      <section id="view-transpose" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">CAPO + TRANSPOSE</div>
+          <h2>Start with the original song. Then choose your capo.</h2>
+          <p class="muted">FretSense always keeps the detected original chords first. Capo changes only the shapes you play. Use − / + only if you intentionally want to change the song key.</p>
+          <div class="panel-head transpose-head"><label class="grow">Original chords<input id="transposeInput" value="C Am F G" placeholder="C Am F G"></label><button id="useSongChords" class="ghost small">Load original song chords</button></div>
+          <div class="mini-label">ORIGINAL SONG CHORDS</div>
+          <div id="originalChordResult" class="big-progression original-progression">C · Am · F · G</div>
+          <div class="transpose-capo-box">
+            <label>Choose capo fret<select id="transposeCapo"><option value="0">No capo</option><option value="1">Fret 1</option><option value="2">Fret 2</option><option value="3">Fret 3</option><option value="4">Fret 4</option><option value="5">Fret 5</option><option value="6">Fret 6</option><option value="7">Fret 7</option><option value="8">Fret 8</option><option value="9">Fret 9</option><option value="10">Fret 10</option><option value="11">Fret 11</option><option value="12">Fret 12</option></select></label>
+            <span id="transposeCapoHint" class="muted">Choose your capo position. The original song chords stay unchanged.</span>
+          </div>
+          <div class="mini-label">SHAPES TO PLAY WITH YOUR CAPO</div>
+          <div id="transposeShapeResult" class="capo-play-result">No capo: play C · Am · F · G</div>
+          <div class="optional-transpose-box">
+            <div class="mini-label">OPTIONAL — CHANGE SONG KEY</div>
+            <p class="muted">Leave this at 0 to keep the original key.</p>
+            <div class="transpose-big"><button id="trDown" class="ghost">−</button><strong id="trBigValue">0</strong><button id="trUp" class="ghost">+</button></div>
+            <div class="mini-label">RESULT AFTER OPTIONAL KEY CHANGE</div>
+            <div id="transposeResult" class="secondary-progression">No key change — original key</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-live" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">LIVE CHORD</div>
+          <h2 id="liveChordHeading">Let the microphone listen to your guitar.</h2>
+          <p class="muted">Best with one clean chord at a time and little background noise.</p>
+          <button id="liveBtn" class="primary">Start Listening</button>
+          <div class="live-readout"><span>DETECTED</span><strong id="liveChord">—</strong><small id="liveConfidence">Mic off</small></div>
+        </div>
+      </section>
+
+      <section id="view-tuner" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">CHROMATIC TUNER</div>
+          <h2>Tune any string.</h2>
+          <button id="tunerBtn" class="primary">Start Tuner</button>
+          <div class="tuner">
+            <div id="tunerNote" class="tuner-note">—</div>
+            <div class="meter"><div class="meter-center"></div><div id="tunerNeedle" class="needle"></div></div>
+            <div id="tunerCents" class="mono">0 cents</div>
+            <div id="tunerFreq" class="muted">— Hz</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-metronome" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">METRONOME</div>
+          <h2>Keep time without leaving the app.</h2>
+          <div class="metro-number" id="metroBpm">92</div>
+          <input id="metroSlider" type="range" min="40" max="220" value="92" />
+          <div class="practice-controls"><button id="metroMinus" class="ghost">−5</button><button id="metroToggle" class="primary">Start</button><button id="metroPlus" class="ghost">+5</button></div>
+          <div id="metroPulse" class="metro-pulse"></div>
+        </div>
+      </section>
+
+
+      <section id="view-strumming" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">RHYTHM STUDIO</div>
+          <h2>See the rhythm. Practice the motion.</h2>
+          <p id="strumSongHint" class="muted">Analyze or open a song first.</p>
+          <div class="strum-hero">
+            <div><span>DETECTED GRID</span><strong id="strumSubdivision">—</strong></div>
+            <div><span>CONFIDENCE</span><strong id="strumConfidence">—</strong></div>
+            <div><span>TEMPO</span><strong id="strumTempo">—</strong></div>
+          </div>
+          <div id="strumStudioGrid" class="strum-grid studio"></div>
+          <div id="strumBeatLabels" class="strum-labels"></div>
+          <div class="practice-controls">
+            <button id="strumTrainerToggle" class="primary">Start Pattern Trainer</button>
+            <button class="ghost strumRate" data-rate="0.7">70%</button>
+            <button class="ghost strumRate" data-rate="0.85">85%</button>
+            <button class="ghost strumRate active" data-rate="1">100%</button>
+          </div>
+          <p id="strumStudioNote" class="muted">D/U direction is a playable suggestion built from the detected attack rhythm.</p>
+        </div>
+      </section>
+
+      <section id="view-isolation" class="view">
+        <div class="panel tool-panel isolation-panel">
+          <div class="panel-kicker">GUITAR ISOLATION</div>
+          <h2>Hear the guitar alone. Then mute it and take its place.</h2>
+          <p id="isolationSongHint" class="muted">Analyze or open a song first.</p>
+          <div class="isolation-actions">
+            <select id="isolationMode" class="isolation-select">
+              <option value="fast">Fast Local DSP — offline</option>
+              <option value="ai">AI Guitar Isolation — on-device</option>
+            </select>
+            <button id="isolateBtn" class="primary">Isolate Guitar + Make Backing Track</button>
+            <button id="refreshIsolationBtn" class="ghost">Check AI Model</button>
+          </div>
+          <div id="isolationProgress" class="progress hidden"><div></div><span>Processing on this Android device…</span></div>
+          <div id="isolationStatus" class="status-card">No isolation loaded.</div>
+          <div id="stemPlayers" class="stem-grid"></div>
+          <div class="warning-card"><strong>Fast DSP</strong> works immediately but is approximate. <strong>AI mode</strong> uses an on-device 6-stem neural model, needs a one-time ~136 MB download, and can use about 1 GB RAM while processing. No Windows engine is required.</div>
+        </div>
+      </section>
+
+      <section id="view-scales" class="view">
+        <div class="panel tool-panel">
+          <div class="panel-kicker">SCALE FINDER</div>
+          <h2 id="scaleHeading">See notes across the fretboard.</h2>
+          <div class="two-inputs">
+            <select id="scaleRoot"></select>
+            <select id="scaleType"><option value="major">Major</option><option value="natural_minor">Natural Minor</option><option value="major_pentatonic">Major Pentatonic</option><option value="minor_pentatonic">Minor Pentatonic</option><option value="blues">Blues</option><option value="dorian">Dorian</option><option value="mixolydian">Mixolydian</option></select>
+          </div>
+          <button id="scaleBtn" class="primary">Show Scale</button>
+          <div id="scaleResult" class="chip-row large"></div>
+          <div id="fretboard" class="fretboard"></div>
+        </div>
+      </section>
+
+      <section id="view-library" class="view">
+        <div class="library-grid">
+          <div class="panel">
+            <div class="panel-head"><div><div class="panel-kicker">MY SONGS</div><h2>Saved analyses</h2></div><button id="refreshSongs" class="ghost small">Refresh</button></div>
+            <div id="songList" class="song-list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-kicker">SETLISTS</div>
+            <h2>Performance lists</h2>
+            <input id="setlistName" placeholder="Setlist name" />
+            <p class="muted">Select songs from the saved list, then create a setlist.</p>
+            <button id="createSetlist" class="primary small">Create from selected</button>
+            <div id="setlistList" class="stack"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-connection" class="view">
+        <div class="panel tool-panel connection-panel">
+          <div class="panel-kicker">STANDALONE ENGINE</div>
+          <h2>Everything runs on your Android phone.</h2>
+          <p class="muted">Chord detection, key, BPM, strumming, transpose, capo, tuner, metronome, scales, tabs beta and practice use the local engine. No Windows PC, IP address or pairing is required.</p>
+          <div class="connection-card">
+            <div><span>LOCAL STATUS</span><strong id="connectionState">CORE ENGINE READY</strong></div>
+            <div id="connectionLight" class="connection-light ok"></div>
+          </div>
+          <div class="panel-kicker">OPTIONAL AI GUITAR ISOLATION</div>
+          <p id="modelState" class="muted">Checking model…</p>
+          <div class="practice-controls left-controls">
+            <button id="saveEngineUrl" class="primary">Download AI Model Once</button>
+            <button id="useLocalEngine" class="ghost">Remove AI Model</button>
+          </div>
+          <div class="premium-note"><strong>Privacy:</strong> normal song analysis stays on this phone. AI isolation also runs on-device; only the model files are downloaded from the internet the first time.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="editDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="panel-kicker">CORRECT CHORD</div>
+      <h3 id="editTime">—</h3>
+      <input id="editChordInput" placeholder="Example: Am7" />
+      <div class="dialog-actions"><button value="cancel" class="ghost">Cancel</button><button id="saveChordEdit" value="default" class="primary">Save</button></div>
+    </form>
+  </dialog>
+
+  <script>window.FretSenseNative=true;</script>
+  <script src="app.js"></script>
+</body>
+</html>

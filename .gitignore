@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Windows builds
+windows/build/
+windows/dist/
+windows/*.spec
+
+# Android / Gradle
+.gradle/
+android/.gradle/
+android/local.properties
+android/**/build/
+*.apk
+*.aab
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local data / models
+*.onnx
+*.wav
+*.mp3
+*.m4a
+*.flac

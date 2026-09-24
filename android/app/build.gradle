@@ -1,0 +1,17 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.fretsense.guitar'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.fretsense.guitar'
+        minSdk 26
+        targetSdk 36
+        versionCode 12
+        versionName '5.2.3'
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.17.0'
+}

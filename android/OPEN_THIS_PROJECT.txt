@@ -1,0 +1,13 @@
+FretSense Multi-Instrument Android v5.2.1.1
+
+Open THIS top-level folder in Android Studio (the folder containing settings.gradle).
+Do not open only the app folder.
+
+Main behavior in v5.2.1:
+- Song analysis always displays ORIGINAL detected chords first.
+- Capo defaults to No Capo.
+- YOU manually choose capo fret 1 through 12.
+- Capo never changes the displayed original song chord.
+- FretSense shows the chord SHAPE to play for the selected capo.
+- Optional key transposition is separate and defaults to 0.
+- Previous chord-analysis and multi-instrument fixes remain included.

@@ -1,0 +1,20 @@
+FretSense Android Premium v3
+
+This is a native Android WebView shell around the shared FretSense UI.
+
+BUILD REQUIREMENTS
+- Android Studio Quail 4 (2026.1.4) OR Android command-line SDK
+- Android SDK Platform 36 + Build Tools 36.0.0
+- JDK 17
+- AGP 9.4.0 / Gradle 9.6
+
+FASTEST BUILD
+1. Open this Android folder in Android Studio.
+2. Allow Gradle Sync to finish.
+3. Build > Build APK(s).
+4. APK appears under app/build/outputs/apk/debug/app-debug.apk.
+
+RUNNING
+- Tuner, metronome, transpose, capo finder, live chord, scales and practice UI work locally.
+- For full song analysis / melody tabs / guitar isolation, on Windows run START_ENGINE_FOR_ANDROID.bat.
+- In the Android app open Connection and enter the displayed http://PC-IP:8000 address.
