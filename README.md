@@ -137,6 +137,10 @@ Those projects/models have their own licenses and terms. Review them before redi
 
 Bug reports and pull requests are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-## License
+##  License
+Proprietary — All Rights Reserved.
 
-FretSense source code in this repository is released under the **MIT License**. Third-party libraries and downloadable models remain under their respective licenses.
+Copyright © 2026 Mervin-codes.
+
+The compiled application may be used for personal use, but the source code
+may not be copied, modified, redistributed, or sold without permission.
